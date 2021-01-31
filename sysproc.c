@@ -95,3 +95,14 @@ int
 sys_getparentid(void){
   return getparentid();
 }
+
+
+int
+sys_getchildren(void){
+  int * child_pids;
+  
+  if (argptr(0 ,(void*)&child_pids , sizeof(int)*64) != 0)
+    return -1;
+  getchildren(child_pids);
+  return 0;
+}
