@@ -295,6 +295,7 @@ wait(void)
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
+        memset(p->systemcall_number, 0, sizeof(p->systemcall_number));
         release(&ptable.lock);
         return pid;
       }
@@ -536,4 +537,9 @@ procdump(void)
 int
 getparentid(void){
   return myproc()->parent->pid;
+}
+
+int 
+getsyscallcounter(int pid){
+  return myproc()->systemcall_number[pid];
 }

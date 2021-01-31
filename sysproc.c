@@ -95,3 +95,16 @@ int
 sys_getparentid(void){
   return getparentid();
 }
+
+
+int 
+sys_getsyscallcounter(void){
+  
+  int pid;
+  
+  if(argint(0, &pid) < 0){
+    cprintf("%d:\n", pid);
+    return -1;
+  }  
+  return getsyscallcounter(pid);  
+};

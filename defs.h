@@ -120,7 +120,8 @@ void            userinit(void);
 int             wait(void);
 void            wakeup(void*);
 void            yield(void);
-int            getparentid(void);
+int             getparentid(void);
+int             getsyscallcounter(int);
 
 // swtch.S
 void            swtch(struct context**, struct context*);
