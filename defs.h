@@ -121,6 +121,7 @@ int             wait(void);
 void            wakeup(void*);
 void            yield(void);
 int             getparentid(void);
+void            getchildren(int *);
 int             getsyscallcounter(int);
 
 // swtch.S

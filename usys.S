@@ -30,4 +30,6 @@ SYSCALL(sbrk)
 SYSCALL(sleep)
 SYSCALL(uptime)
 SYSCALL(getparentid)
+SYSCALL(getchildren)
 SYSCALL(getsyscallcounter)
+
