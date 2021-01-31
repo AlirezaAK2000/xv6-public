@@ -533,6 +533,7 @@ procdump(void)
   }
 }
 
+// returns current process parent id
 int
 getparentid(void){
   return myproc()->parent->pid;
