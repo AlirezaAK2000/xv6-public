@@ -356,10 +356,11 @@ scheduler(void)
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
+      // cprintf("-----qunatum sets and context switch from %d to %d \n" , c->proc->pid , p->pid);
       c->proc = p;
       switchuvm(p);
       p->state = RUNNING;
-
+      p->time_slice = QUANTUM;
       swtch(&(c->scheduler), p->context);
       switchkvm();
 
@@ -581,8 +582,8 @@ setpriority(int pid, int priority){
 
   struct proc *p;
 
-  if(priority > 6 && priority < 1)
-    priority = 5;
+  // if((priority > 6) && (priority < 1))
+  //   priority = 5;
 
     acquire(&ptable.lock);
     for(p=ptable.proc; p<&ptable.proc[NPROC]; p++)

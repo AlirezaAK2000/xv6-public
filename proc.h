@@ -51,6 +51,7 @@ struct proc {
   char name[16];               // Process name (debugging)
   int systemcall_number[30];   // Number of system calls called for each system call
   int priority;                // Process Priority
+  int time_slice;              // remaining slices in round robin policy
 };
 
 // Process memory is laid out contiguously, low addresses first:
