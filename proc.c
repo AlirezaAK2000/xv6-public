@@ -578,23 +578,12 @@ getsyscallcounter(int pid){
 
 
 int
-setpriority(int pid, int priority){
+setpriority(int priority){
 
-  struct proc *p;
+  if((priority > 6) && (priority < 1))
+      priority = 5;
 
-  // if((priority > 6) && (priority < 1))
-  //   priority = 5;
-
-    acquire(&ptable.lock);
-    for(p=ptable.proc; p<&ptable.proc[NPROC]; p++)
-    {
-        if(p->pid == pid)
-        {
-            p->priority = priority;
-            break;
-        }
-    }
-    release(&ptable.lock);
-
-    return pid;
+  myproc()->priority = priority;
+  
+  return priority;
 }
