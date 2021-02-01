@@ -122,8 +122,8 @@ int
 sys_setpriority(void){
 
   int prtority;
-  
-  if(argint(1, &prtority) < 0)
+
+  if(argint(0, &prtority) < 0)
         return -1;
 
   return setpriority(prtority);

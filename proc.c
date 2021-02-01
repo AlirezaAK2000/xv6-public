@@ -299,6 +299,7 @@ wait(void)
         p->killed = 0;
         p->state = UNUSED;
         memset(p->systemcall_number, 0, sizeof(p->systemcall_number));
+        p->priority = 3;
         release(&ptable.lock);
         return pid;
       }
