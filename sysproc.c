@@ -118,4 +118,16 @@ sys_getsyscallcounter(void){
   return getsyscallcounter(pid);  
 };
 
+int 
+sys_setpriority(void){
+
+  int pid, prtority;
+  
+  if(argint(0, &pid) < 0)
+        return -1;
+  if(argint(1, &prtority) < 0)
+        return -1;
+
+  return setpriority(pid, prtority);
+}
 

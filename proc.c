@@ -90,6 +90,7 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
+  p->priority = 3; // Default prioritys
 
   release(&ptable.lock);
 
@@ -326,6 +327,7 @@ void
 scheduler(void)
 {
   struct proc *p;
+  struct proc *p1;
   struct cpu *c = mycpu();
   c->proc = 0;
   
@@ -333,11 +335,23 @@ scheduler(void)
     // Enable interrupts on this processor.
     sti();
 
+    struct proc *high_priority = 0;
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
         continue;
+
+    high_priority = p;
+    // choose process with highest priority
+    for(p1 = ptable.proc; p1 < &ptable.proc[NPROC]; p1++){
+          if(p1->state != RUNNABLE)
+            continue;
+          if(high_priority->priority > p1->priority)
+            high_priority = p1;
+      }
+      p = high_priority;
+
 
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
@@ -559,4 +573,27 @@ void getchildren(int * child_pids){
 int 
 getsyscallcounter(int pid){
   return myproc()->systemcall_number[pid];
+}
+
+
+int
+setpriority(int pid, int priority){
+
+  struct proc *p;
+
+  if(priority > 6 && priority < 1)
+    priority = 5;
+
+    acquire(&ptable.lock);
+    for(p=ptable.proc; p<&ptable.proc[NPROC]; p++)
+    {
+        if(p->pid == pid)
+        {
+            p->priority = priority;
+            break;
+        }
+    }
+    release(&ptable.lock);
+
+    return pid;
 }

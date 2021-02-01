@@ -51,5 +51,6 @@ int main(){
         printf(1, "counts of system call getpid calls : %d\n", getsyscallcounter(11));  
     }
 
-    return 0;
+    // return 0;
+    exit();
 }

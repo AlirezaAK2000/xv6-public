@@ -32,4 +32,4 @@ SYSCALL(uptime)
 SYSCALL(getparentid)
 SYSCALL(getchildren)
 SYSCALL(getsyscallcounter)
-
+SYSCALL(setpriority)
