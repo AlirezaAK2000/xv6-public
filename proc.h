@@ -50,6 +50,7 @@ struct proc {
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
   int systemcall_number[25];   // Number of system calls called for each system call
+  int time_slice;              // remaining slices in round robin policy
 };
 
 // Process memory is laid out contiguously, low addresses first:
