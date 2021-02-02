@@ -12,4 +12,4 @@
 #define NBUF         (MAXOPBLOCKS*3)  // size of disk block cache
 #define FSSIZE       1000  // size of file system in blocks
 #define QUANTUM      5 // qunamtum size for round robin schduler
-#define ALGORITHM    2 // 0 round robin - 1 priority based - 2 queue base
+

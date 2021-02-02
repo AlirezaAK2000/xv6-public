@@ -7,6 +7,8 @@
 #include "proc.h"
 #include "spinlock.h"
 
+int ALGORITHM = 0;  // 0 round robin - 1 priority based - 2 queue base
+
 struct
 {
   struct spinlock lock;
@@ -658,4 +660,10 @@ int setpriority(int priority)
   myproc()->priority = priority;
 
   return priority;
+}
+
+void changepolicy(int policy){
+  
+  ALGORITHM = policy;
+
 }

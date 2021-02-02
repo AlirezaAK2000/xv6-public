@@ -124,8 +124,19 @@ sys_setpriority(void){
   int prtority;
 
   if(argint(0, &prtority) < 0)
-        return -1;
+    return -1;
 
   return setpriority(prtority);
+}
+
+int
+sys_changepolicy(void){
+  int policy;
+
+  if(argint(0, &policy) < 0)
+    return -1;
+  changepolicy(policy);
+  
+  return 0; 
 }
 
