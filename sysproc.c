@@ -140,3 +140,16 @@ sys_changepolicy(void){
   return 0; 
 }
 
+int
+sys_setqueue(void){
+  int pid,q;
+
+  if(argint(0, &pid) < 0)
+    return -1;
+  if(argint(0, &q) < 0)
+    return -1;  
+
+  setqueue(pid, q);
+
+  return 0;
+}

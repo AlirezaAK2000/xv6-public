@@ -25,3 +25,4 @@
 #define SYS_getsyscallcounter 24
 #define SYS_setpriority 25
 #define SYS_changepolicy 26
+#define SYS_setqueue 27

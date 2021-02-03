@@ -667,3 +667,18 @@ void changepolicy(int policy){
   ALGORITHM = policy;
 
 }
+
+void setqueue(int pid, int q){
+
+  struct proc *p;
+
+  acquire(&ptable.lock);
+  for(p=ptable.proc; p<&ptable.proc[NPROC]; p++){
+    if(p->pid == pid){
+      p->queue = q;
+      break;
+    }
+  }
+  release(&ptable.lock);
+  
+}

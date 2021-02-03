@@ -125,6 +125,7 @@ void            getchildren(int *);
 int             getsyscallcounter(int);
 int             setpriority(int);
 void            changepolicy(int);
+void            setqueue(int,int);
 
 // swtch.S
 void            swtch(struct context**, struct context*);
