@@ -44,6 +44,7 @@ void wait_for_children(){
     metrics **mat;
     metrics **cl;
     metrics *sum = malloc(sizeof(metrics));
+    int p;
     mat = malloc(sizeof(metrics *) * PROCESS_NUM);
     cl  = malloc(sizeof(metrics *) * CLASS);
     for (int i = 0; i < PROCESS_NUM; i++)
@@ -54,9 +55,10 @@ void wait_for_children(){
     {
         pids[i] = waitandgetmetrics(mat[i]);
         //for each class of priority
-        cl[mat[i]->priority--]->cbt += mat[i]->cbt;
-        cl[mat[i]->priority--]->turn_around += mat[i]->turn_around;
-        cl[mat[i]->priority--]->wait += mat[i]->wait;  
+        p = (mat[i]-> priority) - 1;
+        cl[p]->cbt += mat[i]->cbt;
+        cl[p]->turn_around += mat[i]->turn_around;
+        cl[p]->wait += mat[i]->wait;  
         //for all child
         sum->cbt += mat[i]->cbt;
         sum->turn_around += mat[i]->turn_around;
@@ -95,7 +97,7 @@ int main()
     {
         int child_pid = getpid();
         for (int i = 0; i < MAX; i++)
-            printf(1, "/%d/ : /%d/\n", child_pid, i);
+            printf(1, "/%d/ : /%d/\n", child_pid, i);           
     }
     exit();
 }
