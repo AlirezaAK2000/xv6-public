@@ -6,4 +6,6 @@ typedef struct {
     int turn_around;
     int cbt;
     int wait;
+    int queue;
+    int priority;
 } metrics;

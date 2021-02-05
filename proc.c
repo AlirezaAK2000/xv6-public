@@ -324,6 +324,7 @@ int wait(void)
         p->running_time = 0;
         memset(p->systemcall_number, 0, sizeof(p->systemcall_number));
         p->priority = 3;
+        p->queue = 1;
         release(&ptable.lock);
         return pid;
       }
@@ -744,7 +745,8 @@ int waitandgetmetrics(metrics *m){
         m->cbt = p->running_time;
         m->turn_around = p->ready_time + p->running_time + p->sleep_time;
         m->wait = p->ready_time;
-        
+        m->priority = p->priority;
+        m->queue = p->queue;
         
         pid = p->pid;
         kfree(p->kstack);
@@ -762,6 +764,7 @@ int waitandgetmetrics(metrics *m){
         p->running_time = 0;
         memset(p->systemcall_number, 0, sizeof(p->systemcall_number));
         p->priority = 3;
+        p->queue = 1;
         release(&ptable.lock);
         return pid;
       }
