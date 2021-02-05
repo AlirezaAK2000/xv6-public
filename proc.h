@@ -52,7 +52,12 @@ struct proc {
   int systemcall_number[30];   // Number of system calls called for each system call
   int priority;                // Process Priority
   int time_slice;              // remaining slices in round robin policy
-  int queue;                    // queue in scheduler
+  int queue;                   // queue in scheduler
+  int create_time;             // creation time
+  int sleep_time;              // sleeping time
+  int termination_time;        // terminate time
+  int ready_time;              // ready time
+  int running_time;            // running time
 };
 
 // Process memory is laid out contiguously, low addresses first:

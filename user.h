@@ -29,6 +29,7 @@ int getsyscallcounter(int);
 int setpriority(int);
 int changepolicy(int);
 int setqueue(int,int);
+int waitandgetmetrics(metrics *m);
 
 // ulib.c
 int stat(const char*, struct stat*);

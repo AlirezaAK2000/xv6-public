@@ -153,3 +153,11 @@ sys_setqueue(void){
 
   return 0;
 }
+
+int 
+sys_waitandgetmetrics(void){
+  metrics *m;
+  if (argptr(0,(void*)&m , sizeof(*m)))
+    return -1;
+  return waitandgetmetrics(m);
+}

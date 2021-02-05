@@ -52,6 +52,8 @@ void trap(struct trapframe *tf)
     {
       acquire(&tickslock);
       ticks++;
+      // update metrics 
+      update_metrics();
       wakeup(&ticks);
       release(&tickslock);
     }

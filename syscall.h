@@ -26,3 +26,4 @@
 #define SYS_setpriority 25
 #define SYS_changepolicy 26
 #define SYS_setqueue 27
+#define SYS_waitandgetmetrics 28

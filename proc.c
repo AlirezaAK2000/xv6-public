@@ -94,6 +94,11 @@ found:
   p->pid = nextpid++;
   p->priority = 3; // Default prioritys
   p->queue = 1;
+  p->create_time = ticks;
+  p->sleep_time = 0;
+  p->termination_time = 0;
+  p->ready_time = 0;
+  p->running_time = 0;
 
   release(&ptable.lock);
 
@@ -136,6 +141,8 @@ void userinit(void)
     panic("userinit: out of memory?");
   inituvm(p->pgdir, _binary_initcode_start, (int)_binary_initcode_size);
   p->sz = PGSIZE;
+  // set create time
+  p->create_time = ticks - p->create_time;
   memset(p->tf, 0, sizeof(*p->tf));
   p->tf->cs = (SEG_UCODE << 3) | DPL_USER;
   p->tf->ds = (SEG_UDATA << 3) | DPL_USER;
@@ -274,6 +281,7 @@ void exit(void)
   }
 
   // Jump into the scheduler, never to return.
+  curproc->termination_time =ticks;
   curproc->state = ZOMBIE;
   sched();
   panic("zombie exit");
@@ -309,6 +317,11 @@ int wait(void)
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
+        p->create_time = 0;
+        p->sleep_time = 0;
+        p->termination_time = 0;
+        p->ready_time = 0;
+        p->running_time = 0;
         memset(p->systemcall_number, 0, sizeof(p->systemcall_number));
         p->priority = 3;
         release(&ptable.lock);
@@ -327,6 +340,32 @@ int wait(void)
     sleep(curproc, &ptable.lock); //DOC: wait-sleep
   }
 }
+
+
+void
+update_metrics(void){
+  struct proc * p;
+  acquire(&ptable.lock);
+  for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+  {
+    switch(p->state) {
+      case SLEEPING:
+        p->sleep_time++;
+        break;
+      case RUNNABLE:
+        p->ready_time++;
+        break;
+      case RUNNING:
+        p->running_time++;
+        break;
+      default:
+        ;
+    }
+  }
+  release(&ptable.lock);
+  
+}
+
 
 //PAGEBREAK: 42
 // Per-CPU process scheduler.
@@ -528,7 +567,7 @@ void sleep(void *chan, struct spinlock *lk)
   // Go to sleep.
   p->chan = chan;
   p->state = SLEEPING;
-
+  
   sched();
 
   // Tidy up.
@@ -681,4 +720,62 @@ void setqueue(int pid, int q){
   }
   release(&ptable.lock);
   
+}
+
+int waitandgetmetrics(metrics *m){
+  struct proc *p;
+  int havekids, pid;
+  struct proc *curproc = myproc();
+
+  acquire(&ptable.lock);
+  for (;;)
+  {
+    // Scan through table looking for exited children.
+    havekids = 0;
+    for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+    {
+      if (p->parent != curproc)
+        continue;
+      havekids = 1;
+      if (p->state == ZOMBIE)
+      {
+        // Found one.
+        //set metrcis
+        m->cbt = p->running_time;
+        m->turn_around = p->ready_time + p->running_time + p->sleep_time;
+        m->wait = p->ready_time;
+        
+        
+        pid = p->pid;
+        kfree(p->kstack);
+        p->kstack = 0;
+        freevm(p->pgdir);
+        p->pid = 0;
+        p->parent = 0;
+        p->name[0] = 0;
+        p->killed = 0;
+        p->state = UNUSED;
+        p->create_time = 0;
+        p->sleep_time = 0;
+        p->termination_time = 0;
+        p->ready_time = 0;
+        p->running_time = 0;
+        memset(p->systemcall_number, 0, sizeof(p->systemcall_number));
+        p->priority = 3;
+        release(&ptable.lock);
+        return pid;
+      }
+    }
+
+    // No point waiting if we don't have any children.
+    if (!havekids || curproc->killed)
+    {
+      release(&ptable.lock);
+      return -1;
+    }
+
+    // Wait for children to exit.  (See wakeup1 call in proc_exit.)
+    sleep(curproc, &ptable.lock); //DOC: wait-sleep
+  }
+
 }

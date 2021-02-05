@@ -126,6 +126,8 @@ int             getsyscallcounter(int);
 int             setpriority(int);
 void            changepolicy(int);
 void            setqueue(int,int);
+void            update_metrics(void);
+int             waitandgetmetrics(metrics *m);
 
 // swtch.S
 void            swtch(struct context**, struct context*);
