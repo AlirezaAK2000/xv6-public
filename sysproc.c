@@ -146,7 +146,7 @@ sys_setqueue(void){
 
   if(argint(0, &pid) < 0)
     return -1;
-  if(argint(0, &q) < 0)
+  if(argint(1, &q) < 0)
     return -1;  
 
   setqueue(pid, q);

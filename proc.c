@@ -398,8 +398,9 @@ void priority_based_scheduler(struct cpu *c, int queue , int reverse)
       // choose process with highest priority
       for (p1 = ptable.proc; p1 < &ptable.proc[NPROC]; p1++)
       {
-        if (p1->state != RUNNABLE || p1->queue != queue)
+        if (p1->state != RUNNABLE || p1->queue != queue){
           continue;
+        }
         if (high_priority->priority > p1->priority)
           high_priority = p1;
       }
@@ -409,8 +410,9 @@ void priority_based_scheduler(struct cpu *c, int queue , int reverse)
       // choose process with highest priority
       for (p1 = ptable.proc; p1 < &ptable.proc[NPROC]; p1++)
       {
-        if (p1->state != RUNNABLE || p1->queue != queue)
+        if (p1->state != RUNNABLE || p1->queue != queue){
           continue;
+        }
         if (low_priority->priority < p1->priority)
           low_priority = p1;
       }
@@ -419,7 +421,6 @@ void priority_based_scheduler(struct cpu *c, int queue , int reverse)
     // Switch to chosen process.  It is the process's job
     // to release ptable.lock and then reacquire it
     // before jumping back to us.
-    // cprintf("-----qunatum sets and context switch from %d to %d \n" , c->proc->pid , p->pid);
     c->proc = p;
     switchuvm(p);
     p->state = RUNNING;
@@ -442,7 +443,7 @@ void round_robin_scheduler(struct cpu *c, int queue)
   // Loop over process table looking for process to run.
   acquire(&ptable.lock);
   for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
-  {
+  { 
     if (p->state != RUNNABLE || p->queue != queue)
       continue;
 
@@ -463,11 +464,25 @@ void round_robin_scheduler(struct cpu *c, int queue)
   release(&ptable.lock);
 }
 
+int checkhigherpriority(int queue){
+  struct proc *p;
+  int is_ok = 1;
+  acquire(&ptable.lock);
+  for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+  { 
+    if (p->state == RUNNABLE && p->queue < queue){
+      is_ok = 0;
+      break;
+    }
+  }
+  release(&ptable.lock);
+  return is_ok; 
+}
+
 void scheduler(void)
 {
   struct cpu *c = mycpu();
   c->proc = 0;
-
   for (;;)
   {
     if (ALGORITHM == 0 || ALGORITHM == 2)
@@ -475,8 +490,14 @@ void scheduler(void)
       round_robin_scheduler(c, 1);
       if (ALGORITHM == 2)
       {
-        priority_based_scheduler(c, 2 , 0);
-        priority_based_scheduler(c, 3 , 1);
+        if(!checkhigherpriority(2))
+          continue;
+        priority_based_scheduler(c, 2,0);
+        if(!checkhigherpriority(3))
+          continue;
+        priority_based_scheduler(c, 3,1);
+        if(!checkhigherpriority(4))
+          continue;
         round_robin_scheduler(c, 4);
       }
     }

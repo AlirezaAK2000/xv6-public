@@ -186,6 +186,7 @@ UPROGS=\
 	_getsyscallcountertest\
 	_priorityschedtest\
 	_roundRobinTest\
+	_multiLayeredQueuedTest\
 
 
 fs.img: mkfs README $(UPROGS)
@@ -262,6 +263,7 @@ EXTRA=\
 	getsyscallcountertest.c\
 	priorityschedtest.c\
 	roundRobinTest.c\
+	multiLayeredQueuedTest.c\
 	README dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
 	.gdbinit.tmpl gdbutil\
 

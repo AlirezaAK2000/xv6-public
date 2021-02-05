@@ -26,7 +26,8 @@ void print_averages(metrics *sum)
     printf(1, "_____________________________________________\n");
 }
 
-void wait_for_children(){
+void wait_for_children()
+{
     int pids[PROCESS_NUM];
     metrics **mat;
     metrics *sum = malloc(sizeof(metrics));
@@ -45,9 +46,8 @@ void wait_for_children(){
     print_averages(sum);
 }
 
-int main()
+void create_children(int pid)
 {
-    int pid = getpid();
     for (int i = 0; i < PROCESS_NUM; i++)
     {
         if (pid == getpid())
@@ -55,16 +55,23 @@ int main()
         else
             break;
     }
+}
+
+void do_work()
+{
+    int child_pid = getpid();
+    for (int i = 0; i < MAX; i++)
+        printf(1, "/%d/ : /%d/\n", child_pid, i);
+}
+
+int main()
+{
+    int pid = getpid();
+    create_children(pid);
 
     if (pid == getpid())
-    {
         wait_for_children();
-    }
     else
-    {
-        int child_pid = getpid();
-        for (int i = 0; i < MAX; i++)
-            printf(1, "/%d/ : /%d/\n", child_pid, i);
-    }
+        do_work();
     exit();
 }
