@@ -446,14 +446,13 @@ void round_robin_scheduler(struct cpu *c, int queue)
   { 
     if (p->state != RUNNABLE || p->queue != queue)
       continue;
-
     // Switch to chosen process.  It is the process's job
     // to release ptable.lock and then reacquire it
     // before jumping back to us.
     c->proc = p;
     switchuvm(p);
     p->state = RUNNING;
-    p->time_slice = QUANTUM;
+    p->time_slice = QUANTUM - 1;
     swtch(&(c->scheduler), p->context);
     switchkvm();
 

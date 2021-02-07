@@ -110,7 +110,8 @@ void trap(struct trapframe *tf)
       tf->trapno == T_IRQ0 + IRQ_TIMER)
   {
     int time_slice = myproc()->time_slice;
-    if (time_slice && (ALGORITHM == 0 || ALGORITHM == 2) && (myproc()->queue == 1 || myproc()->queue == 4))
+    if (time_slice && (ALGORITHM == 0 || ALGORITHM == 2)
+       && (myproc()->queue == 1 || myproc()->queue == 4))
     {
       myproc()->time_slice--;
     }
