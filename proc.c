@@ -141,8 +141,6 @@ void userinit(void)
     panic("userinit: out of memory?");
   inituvm(p->pgdir, _binary_initcode_start, (int)_binary_initcode_size);
   p->sz = PGSIZE;
-  // set create time
-  p->create_time = ticks - p->create_time;
   memset(p->tf, 0, sizeof(*p->tf));
   p->tf->cs = (SEG_UCODE << 3) | DPL_USER;
   p->tf->ds = (SEG_UDATA << 3) | DPL_USER;
@@ -155,6 +153,8 @@ void userinit(void)
   safestrcpy(p->name, "initcode", sizeof(p->name));
   p->cwd = namei("/");
 
+  // set create time
+  p->create_time = ticks - p->create_time;
   // this assignment to p->state lets other cores
   // run this process. the acquire forces the above
   // writes to be visible, and the lock is also needed
@@ -228,6 +228,9 @@ int fork(void)
 
   pid = np->pid;
 
+  // set create time
+  np->create_time = ticks - np->create_time;
+  
   acquire(&ptable.lock);
 
   np->state = RUNNABLE;
